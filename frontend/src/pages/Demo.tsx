@@ -299,57 +299,83 @@ export function Demo() {
     setActiveStep(null);
     startRef.current = Date.now();
 
-    let completed = false;
-    const es = new EventSource("/api/demo/run");
-    esRef.current = es;
+    const ctrl = new AbortController();
+    esRef.current = ctrl as unknown as EventSource;
 
-    es.addEventListener("step", (ev) => {
-      const step: DemoStep = JSON.parse(ev.data);
-      setSteps((prev) => {
-        const existing = prev.findIndex((s) => s.step === step.step);
-        if (existing >= 0) {
-          const copy = [...prev];
-          copy[existing] = step;
-          return copy;
+    (async () => {
+      try {
+        const res = await fetch("/api/demo/run", { method: "POST", signal: ctrl.signal });
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}));
+          setError(body.error || `Demo failed (${res.status})`);
+          setRunning(false);
+          return;
         }
-        return [...prev, step];
-      });
-      if (step.status === "complete" && step.payload) {
-        setActiveStep(step.step);
-      }
-    });
 
-    es.addEventListener("complete", (ev) => {
-      completed = true;
-      const data = JSON.parse(ev.data);
-      setTotalTime(data.totalTime || (Date.now() - startRef.current) / 1000);
-      setReportId(data.reportId || "");
-      setDone(true);
-      setRunning(false);
-      es.close();
-    });
+        const reader = res.body!.getReader();
+        const decoder = new TextDecoder();
+        let buf = "";
 
-    es.addEventListener("error", (ev) => {
-      completed = true;
-      if (ev instanceof MessageEvent) {
-        const data = JSON.parse(ev.data);
-        setError(data.error || "Demo failed");
-      }
-      setRunning(false);
-      es.close();
-    });
+        while (true) {
+          const { done: streamDone, value } = await reader.read();
+          if (streamDone) break;
+          buf += decoder.decode(value, { stream: true });
 
-    es.onerror = () => {
-      if (!completed) {
-        setError("Connection lost");
+          const parts = buf.split("\n\n");
+          buf = parts.pop()!;
+
+          for (const part of parts) {
+            let eventType = "";
+            let eventData = "";
+            for (const line of part.split("\n")) {
+              if (line.startsWith("event: ")) eventType = line.slice(7);
+              else if (line.startsWith("data: ")) eventData = line.slice(6);
+            }
+            if (!eventData) continue;
+
+            if (eventType === "step") {
+              const step: DemoStep = JSON.parse(eventData);
+              setSteps((prev) => {
+                const existing = prev.findIndex((s) => s.step === step.step);
+                if (existing >= 0) {
+                  const copy = [...prev];
+                  copy[existing] = step;
+                  return copy;
+                }
+                return [...prev, step];
+              });
+              if (step.status === "complete" && step.payload) {
+                setActiveStep(step.step);
+              }
+            } else if (eventType === "complete") {
+              const data = JSON.parse(eventData);
+              setTotalTime(data.totalTime || (Date.now() - startRef.current) / 1000);
+              setReportId(data.reportId || "");
+              setDone(true);
+              setRunning(false);
+            } else if (eventType === "error") {
+              const data = JSON.parse(eventData);
+              setError(data.error || "Demo failed");
+              setRunning(false);
+            }
+          }
+        }
+
         setRunning(false);
+      } catch (err) {
+        if ((err as Error).name !== "AbortError") {
+          setError("Connection lost");
+          setRunning(false);
+        }
       }
-      es.close();
-    };
+    })();
   }, []);
 
   const reset = () => {
-    if (esRef.current) esRef.current.close();
+    if (esRef.current) {
+      const ref = esRef.current as unknown as AbortController;
+      if (typeof ref.abort === "function") ref.abort();
+    }
     setSteps([]);
     setRunning(false);
     setDone(false);

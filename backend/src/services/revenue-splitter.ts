@@ -21,13 +21,27 @@ export async function splitRevenue(
 
   const agentAccount = config.near.agent_account || "agent.testnet";
 
+  let ownerTxHash: string | null = isDemoMode() ? `demo-tx-owner-${reportId.slice(0, 8)}` : null;
+  let contributorsTxHash: string | null = isDemoMode() ? `demo-tx-contributors-${reportId.slice(0, 8)}` : null;
+
+  if (!isDemoMode()) {
+    const agentId = process.env.AGENT_ID;
+    if (agentId) {
+      const ownerResult = await executeTransfer(agentId, token, ownerAmount, config.near.owner_account);
+      ownerTxHash = ownerResult.correlation_id;
+
+      const contribResult = await executeTransfer(agentId, token, contributorsAmount, config.near.contributors_account);
+      contributorsTxHash = contribResult.correlation_id;
+    }
+  }
+
   addEntry({
     type: "payout",
     amount: ownerAmount,
     token,
     from: agentAccount,
     to: config.near.owner_account,
-    txHash: isDemoMode() ? `demo-tx-owner-${reportId.slice(0, 8)}` : null,
+    txHash: ownerTxHash,
     reportId,
     description: `Owner payout (${config.revenue.owner_pct}%)`,
   });
@@ -38,30 +52,10 @@ export async function splitRevenue(
     token,
     from: agentAccount,
     to: config.near.contributors_account,
-    txHash: isDemoMode()
-      ? `demo-tx-contributors-${reportId.slice(0, 8)}`
-      : null,
+    txHash: contributorsTxHash,
     reportId,
     description: `Contributors payout (${config.revenue.contributors_pct}%)`,
   });
-
-  if (!isDemoMode()) {
-    const agentId = process.env.AGENT_ID;
-    if (agentId) {
-      await executeTransfer(
-        agentId,
-        token,
-        ownerAmount,
-        config.near.owner_account,
-      );
-      await executeTransfer(
-        agentId,
-        token,
-        contributorsAmount,
-        config.near.contributors_account,
-      );
-    }
-  }
 
   return {
     owner: ownerAmount,

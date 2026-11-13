@@ -160,6 +160,16 @@ export async function generateReport(
       report.inferenceCost = demo.cost;
     }
 
+    const maxPerReport = parseFloat(config.spending.max_per_report_usd);
+    const actualCost = parseFloat(report.inferenceCost);
+    if (actualCost > maxPerReport * 1.5) {
+      report.status = "failed";
+      recordSpend(report.inferenceCost, reportId);
+      throw new Error(
+        `Inference cost $${report.inferenceCost} exceeded per-report cap $${config.spending.max_per_report_usd} — report not delivered`,
+      );
+    }
+
     report.status = "complete";
     recordSpend(report.inferenceCost, reportId);
     return report;

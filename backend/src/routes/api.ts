@@ -543,7 +543,7 @@ function makeDemoStep(
   return { step, label, status, detail, timestamp: new Date().toISOString(), ...(payload ? { payload } : {}) };
 }
 
-router.get("/demo/run", async (_req: Request, res: Response) => {
+router.post("/demo/run", async (_req: Request, res: Response) => {
   if (demoRunning) {
     res.status(409).json({ error: "Demo already running" });
     return;
