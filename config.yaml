@@ -1,0 +1,55 @@
+# ============================================================
+# Autonomous Research Shop — Owner Configuration
+# ============================================================
+# Change these values at any time. The agent hot-reloads on save.
+# No code changes required.
+
+agent:
+  name: "MarketMind"
+  description: "AI-powered crypto market research agent"
+
+# NEAR account the agent operates from (set after first run)
+near:
+  network: "testnet"                      # testnet | mainnet
+  agent_account: ""                       # filled automatically on first run
+  contributors_account: "contributors.testnet"
+  owner_account: "owner.testnet"
+
+# Revenue split — must sum to 100
+revenue:
+  owner_pct: 70
+  contributors_pct: 20
+  treasury_pct: 10                        # retained by the agent for operating costs
+
+# Pricing
+pricing:
+  min_price_usd: "5.00"                   # minimum price per report in USD
+  default_price_usd: "10.00"              # default listing price
+  max_price_usd: "30.00"                  # ceiling for the dynamic pricing engine
+  accepted_tokens:                        # tokens the agent accepts via NEAR Intents
+    - "nep141:wrap.near"
+    - "nep141:usdt.tether-token.near"
+    - "nep141:usdc.near"
+
+# Spending caps — enforced before every inference call
+spending:
+  max_daily_inference_usd: "50.00"        # hard cap on AI inference per day
+  max_per_report_usd: "2.00"             # max inference cost per single report
+
+# Treasury management — the agent rebalances toward these targets
+treasury:
+  target_runway_days: 30
+  target_stablecoin_pct: 70
+
+# Affiliates
+affiliates:
+  commission_pct: 5
+  enabled: true
+
+# Escrow / money-back guarantee
+escrow:
+  hold_period_days: 7
+  auto_refund_threshold: 0.4              # refund if prediction accuracy below 40%
+
+# Kill switch — set to true to immediately halt all agent operations
+kill_switch: false
