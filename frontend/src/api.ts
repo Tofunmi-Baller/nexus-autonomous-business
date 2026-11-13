@@ -1,7 +1,7 @@
 export interface LedgerEntry {
   id: string;
   timestamp: string;
-  type: "sale" | "inference_cost" | "payout" | "deposit" | "refund";
+  type: "sale" | "inference_cost" | "payout" | "deposit" | "refund" | "procurement" | "swap" | "commission";
   amount: string;
   token: string;
   from: string;
@@ -51,6 +51,7 @@ export interface LedgerSummary {
   totalCosts: string;
   totalPayouts: string;
   netRevenue: string;
+  saleCount: number;
   entryCount: number;
 }
 

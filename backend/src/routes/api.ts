@@ -6,6 +6,7 @@ import {
   getEntries,
   getEntriesByType,
   getEntriesByReport,
+  getCount,
   getSummary,
   addEntry,
 } from "../services/ledger.js";
@@ -125,7 +126,7 @@ router.get("/status", async (_req: Request, res: Response) => {
       balances,
       dailySpend: getDailySpend(),
       maxDailySpend: config.spending.max_daily_inference_usd,
-      totalSales: summary.entryCount,
+      totalSales: summary.saleCount,
       totalRevenue: summary.totalSales,
       uptime: formatUptime(uptimeSeconds),
     });
@@ -143,9 +144,7 @@ router.get("/ledger", (req: Request, res: Response) => {
     ? getEntriesByType(type).slice(offset, offset + limit)
     : getEntries(limit, offset);
 
-  const allEntries = type ? getEntriesByType(type) : getEntries(10000, 0);
-
-  res.json({ entries, total: allEntries.length });
+  res.json({ entries, total: getCount(type || undefined) });
 });
 
 router.get("/ledger/summary", (_req: Request, res: Response) => {
@@ -194,39 +193,39 @@ async function afterSale<T>(
 }
 
 router.post("/reports/buy", async (req: Request, res: Response) => {
+  if (isKilled()) {
+    res.status(503).json({ error: "Agent is shut down — kill switch is active" });
+    return;
+  }
+
+  const { topic, buyer, token } = req.body as {
+    topic?: string;
+    buyer?: string;
+    token?: string;
+  };
+
+  if (
+    typeof topic !== "string" ||
+    typeof buyer !== "string" ||
+    !topic.trim() ||
+    !buyer.trim()
+  ) {
+    res.status(400).json({ error: "topic and buyer are required" });
+    return;
+  }
+
+  const config = getConfig();
+  const paymentToken = token || "nep141:usdc.near";
+  const affiliateParam = req.query.affiliate ?? req.body?.affiliate;
+  const affiliateCode =
+    typeof affiliateParam === "string" && affiliateParam.trim()
+      ? affiliateParam.trim()
+      : null;
+
+  const price = getCurrentPrice();
+  const reportId = uuidv4();
+
   try {
-    if (isKilled()) {
-      res.status(503).json({ error: "Agent is shut down — kill switch is active" });
-      return;
-    }
-
-    const { topic, buyer, token } = req.body as {
-      topic?: string;
-      buyer?: string;
-      token?: string;
-    };
-
-    if (
-      typeof topic !== "string" ||
-      typeof buyer !== "string" ||
-      !topic.trim() ||
-      !buyer.trim()
-    ) {
-      res.status(400).json({ error: "topic and buyer are required" });
-      return;
-    }
-
-    const config = getConfig();
-    const paymentToken = token || "nep141:usdc.near";
-    const affiliateParam = req.query.affiliate ?? req.body?.affiliate;
-    const affiliateCode =
-      typeof affiliateParam === "string" && affiliateParam.trim()
-        ? affiliateParam.trim()
-        : null;
-
-    const price = getCurrentPrice();
-    const reportId = uuidv4();
-
     addDecision({
       type: "general",
       action: `Accepted order from ${buyer} for "${topic}" at $${price}`,
@@ -342,6 +341,16 @@ router.post("/reports/buy", async (req: Request, res: Response) => {
       nextPrice: getCurrentPrice(),
     });
   } catch (err) {
+    addEntry({
+      type: "refund",
+      amount: price,
+      token: paymentToken,
+      from: getAgentAccountId(),
+      to: buyer!,
+      txHash: isDemoMode() ? `demo-refund-${Date.now()}` : null,
+      reportId,
+      description: `Auto-refund: report generation failed (${(err as Error).message})`,
+    });
     res.status(500).json({ error: (err as Error).message });
   }
 });
@@ -632,7 +641,7 @@ router.get("/demo/run", async (_req: Request, res: Response) => {
     const split = await splitRevenue(price, "nep141:usdc.near", report.id);
     recordSale(report.inferenceCost);
     recordProductSale(report.topic, price, report.inferenceCost);
-    recordTreasuryInflow("nep141:usdc.near", price);
+    recordTreasuryInflow("nep141:usdc.near", split.treasury);
     sendStep(makeDemoStep(6, "Splitting revenue", "complete", `Revenue distributed to 3 parties`, {
       owner: { amount: split.owner, pct: config.revenue.owner_pct, account: config.near.owner_account },
       contributors: { amount: split.contributors, pct: config.revenue.contributors_pct, account: config.near.contributors_account },

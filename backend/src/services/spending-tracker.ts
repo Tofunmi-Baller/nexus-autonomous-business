@@ -1,5 +1,5 @@
 import { getConfig } from "../config.js";
-import { addEntry, getDailyInferenceCosts } from "./ledger.js";
+import { addEntry, getDailyInferenceCosts, getInferenceCostsForDate } from "./ledger.js";
 
 export function recordSpend(amount: string, reportId: string): void {
   const config = getConfig();
@@ -38,7 +38,7 @@ export function getSpendHistory(
     const date = new Date();
     date.setDate(date.getDate() - i);
     const dateStr = date.toISOString().slice(0, 10);
-    history.push({ date: dateStr, total: getDailySpend() });
+    history.push({ date: dateStr, total: getInferenceCostsForDate(dateStr) });
   }
 
   return history;

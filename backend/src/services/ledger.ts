@@ -83,6 +83,13 @@ export function getEntriesByType(type: string): LedgerEntry[] {
   return stmt.all(type) as LedgerEntry[];
 }
 
+export function getCount(type?: string): number {
+  if (type) {
+    return (db.prepare(`SELECT COUNT(*) as c FROM ledger WHERE type = ?`).get(type) as { c: number }).c;
+  }
+  return (db.prepare(`SELECT COUNT(*) as c FROM ledger`).get() as { c: number }).c;
+}
+
 export function getEntriesByReport(reportId: string): LedgerEntry[] {
   const stmt = db.prepare(
     `SELECT id, timestamp, type, amount, token, "from", "to", txHash, reportId, description
@@ -99,6 +106,7 @@ export function getSummary(): LedgerSummary {
       COALESCE(SUM(CASE WHEN type IN ('inference_cost', 'procurement') THEN CAST(amount AS REAL) ELSE 0 END), 0) as totalCosts,
       COALESCE(SUM(CASE WHEN type = 'payout' THEN CAST(amount AS REAL) ELSE 0 END), 0) as totalPayouts,
       COALESCE(SUM(CASE WHEN type = 'refund' THEN CAST(amount AS REAL) ELSE 0 END), 0) as totalRefunds,
+      COUNT(CASE WHEN type = 'sale' THEN 1 END) as saleCount,
       COUNT(*) as entryCount
     FROM ledger`,
     )
@@ -107,6 +115,7 @@ export function getSummary(): LedgerSummary {
     totalCosts: number;
     totalPayouts: number;
     totalRefunds: number;
+    saleCount: number;
     entryCount: number;
   };
 
@@ -120,21 +129,24 @@ export function getSummary(): LedgerSummary {
       row.totalPayouts -
       row.totalRefunds
     ).toFixed(2),
+    saleCount: row.saleCount,
     entryCount: row.entryCount,
   };
 }
 
-export function getDailyInferenceCosts(): string {
-  const today = new Date().toISOString().slice(0, 10);
+export function getInferenceCostsForDate(dateStr: string): string {
   const row = db
     .prepare(
       `SELECT COALESCE(SUM(CAST(amount AS REAL)), 0) as total
      FROM ledger
-     WHERE type = 'inference_cost' AND timestamp >= ?`,
+     WHERE type = 'inference_cost' AND timestamp >= ? AND timestamp < ?`,
     )
-    .get(today + "T00:00:00.000Z") as { total: number };
-
+    .get(dateStr + "T00:00:00.000Z", dateStr + "T23:59:59.999Z") as { total: number };
   return row.total.toFixed(4);
+}
+
+export function getDailyInferenceCosts(): string {
+  return getInferenceCostsForDate(new Date().toISOString().slice(0, 10));
 }
 
 export function getOperatingCostsSince(sinceIso: string): number {

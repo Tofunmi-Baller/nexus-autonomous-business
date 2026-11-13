@@ -100,6 +100,7 @@ export interface LedgerSummary {
   totalCosts: string;
   totalPayouts: string;
   netRevenue: string;
+  saleCount: number;
   entryCount: number;
 }
 
