@@ -7,13 +7,13 @@ import { initLedger } from "./services/ledger.js";
 import { startAutonomousLoops } from "./services/scheduler.js";
 import apiRouter from "./routes/api.js";
 
-const PORT = parseInt(process.env.PORT || "3001", 10);
+const PORT = parseInt(process.env.PORT || "3011", 10);
 
 function boot(): void {
   const config = loadConfig();
   console.log(`\n  ╔══════════════════════════════════════╗`);
-  console.log(`  ║  ${config.agent.name.padEnd(34)} ║`);
-  console.log(`  ║  Autonomous Research Shop             ║`);
+  console.log(`  ║  ${config.agent.name.padEnd(35)} ║`);
+  console.log(`  ║  Autonomous Research Shop            ║`);
   console.log(`  ╠══════════════════════════════════════╣`);
   console.log(`  ║  Network:    ${config.near.network.padEnd(23)} ║`);
   console.log(`  ║  Demo mode:  ${(process.env.DEMO_MODE === "true" ? "ON" : "OFF").padEnd(23)} ║`);

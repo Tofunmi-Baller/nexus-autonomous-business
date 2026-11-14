@@ -70,7 +70,7 @@ The ${topic} market shows mixed signals this week with a cautious bullish bias. 
 
 **Bear case (15% probability)**: Rejection at current levels leading to a test of the $88,000–$90,000 demand zone. Trigger: unexpected hawkish Fed commentary or major exchange incident.
 
-*Report generated on ${date} by MarketMind AI. This is not financial advice.*`;
+*Report generated on ${date} by Nexus AI. This is not financial advice.*`;
 
   const summary = `The ${topic} market shows mixed signals with a cautious bullish bias. Trading volumes increased 12% while volatility remains contained, suggesting accumulation.`;
   return { content, summary, cost: "0.0180" };

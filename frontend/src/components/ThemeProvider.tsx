@@ -16,14 +16,14 @@ export function useTheme() {
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window === "undefined") return "dark";
-    return (localStorage.getItem("marketmind-theme") as Theme) || "dark";
+    return (localStorage.getItem("nexus-theme") as Theme) || "dark";
   });
 
   useEffect(() => {
     const root = document.documentElement;
     root.classList.add("theme-transitioning");
     root.setAttribute("data-theme", theme);
-    localStorage.setItem("marketmind-theme", theme);
+    localStorage.setItem("nexus-theme", theme);
     const timer = setTimeout(() => root.classList.remove("theme-transitioning"), 400);
     return () => clearTimeout(timer);
   }, [theme]);

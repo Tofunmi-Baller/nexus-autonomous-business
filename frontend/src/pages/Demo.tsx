@@ -396,7 +396,7 @@ export function Demo() {
           <span className="text-xs uppercase tracking-widest text-accent-violet font-semibold">Live Demo</span>
         </div>
         <h1 className="text-3xl sm:text-4xl font-bold mb-2">
-          Watch <span className="gradient-text">MarketMind</span> Work
+          Watch <span className="gradient-text">Nexus</span> Work
         </h1>
         <p className="text-text-secondary max-w-lg mx-auto">
           One customer payment triggers an 8-step autonomous business cycle. Click each completed step to see exactly what happened.
@@ -572,17 +572,17 @@ export function Demo() {
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <Link to="/intelligence" className="glass rounded-2xl p-4 text-center hover:scale-[1.02] transition-all group">
+            <Link to="/app/intelligence" className="glass rounded-2xl p-4 text-center hover:scale-[1.02] transition-all group">
               <Brain className="w-6 h-6 text-accent-violet mx-auto mb-2 group-hover:scale-110 transition-transform" />
               <p className="text-sm font-semibold">Agent Decisions</p>
             </Link>
             {reportId && (
-              <Link to="/buy" className="glass rounded-2xl p-4 text-center hover:scale-[1.02] transition-all group">
+              <Link to="/app/buy" className="glass rounded-2xl p-4 text-center hover:scale-[1.02] transition-all group">
                 <FileText className="w-6 h-6 text-accent-blue mx-auto mb-2 group-hover:scale-110 transition-transform" />
                 <p className="text-sm font-semibold">View Report</p>
               </Link>
             )}
-            <Link to="/ledger" className="glass rounded-2xl p-4 text-center hover:scale-[1.02] transition-all group">
+            <Link to="/app/ledger" className="glass rounded-2xl p-4 text-center hover:scale-[1.02] transition-all group">
               <ScrollText className="w-6 h-6 text-accent-cyan mx-auto mb-2 group-hover:scale-110 transition-transform" />
               <p className="text-sm font-semibold">Full Ledger</p>
             </Link>

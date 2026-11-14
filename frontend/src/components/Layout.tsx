@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, type ReactNode } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   ScrollText,
@@ -16,32 +16,39 @@ import {
   Brain,
   Landmark,
   Users,
+  LogOut,
 } from "lucide-react";
 import { fetchStatus, type AgentStatus } from "../api";
 import { AnimatedBackground } from "./AnimatedBackground";
 import { useTheme } from "./ThemeProvider";
 
 const PRIMARY_NAV = [
-  { to: "/", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/demo", label: "Demo", icon: Play },
-  { to: "/buy", label: "Buy Report", icon: ShoppingCart },
-  { to: "/ledger", label: "Ledger", icon: ScrollText },
+  { to: "/app", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/app/demo", label: "Demo", icon: Play },
+  { to: "/app/buy", label: "Buy Report", icon: ShoppingCart },
+  { to: "/app/ledger", label: "Ledger", icon: ScrollText },
 ];
 
 const MORE_NAV = [
-  { to: "/intelligence", label: "Agent Decisions", icon: Brain, desc: "See the agent's reasoning" },
-  { to: "/treasury", label: "Treasury", icon: Landmark, desc: "Portfolio and balance sheet" },
-  { to: "/affiliates", label: "Affiliates", icon: Users, desc: "Referral program" },
+  { to: "/app/intelligence", label: "Agent Decisions", icon: Brain, desc: "See the agent's reasoning" },
+  { to: "/app/treasury", label: "Treasury", icon: Landmark, desc: "Portfolio and balance sheet" },
+  { to: "/app/affiliates", label: "Affiliates", icon: Users, desc: "Referral program" },
 ];
 
 const ALL_NAV = [...PRIMARY_NAV, ...MORE_NAV];
 
 export function Layout({ children, onShowTour }: { children: ReactNode; onShowTour?: () => void }) {
   const { theme, toggleTheme } = useTheme();
+  const navigate = useNavigate();
   const [status, setStatus] = useState<AgentStatus | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const moreRef = useRef<HTMLDivElement>(null);
+
+  const handleLogout = () => {
+    localStorage.removeItem("nexus-user");
+    navigate("/");
+  };
 
   useEffect(() => {
     fetchStatus().then(setStatus).catch(() => {});
@@ -71,8 +78,8 @@ export function Layout({ children, onShowTour }: { children: ReactNode; onShowTo
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent-violet to-accent-cyan flex items-center justify-center">
               <Zap className="w-4 h-4 text-white" />
             </div>
-            <span className="font-bold text-lg tracking-tight gradient-text hidden sm:inline">MarketMind</span>
-            <span className="font-bold text-lg tracking-tight sm:hidden">MM</span>
+            <span className="font-bold text-lg tracking-tight gradient-text hidden sm:inline">Nexus</span>
+            <span className="font-bold text-lg tracking-tight sm:hidden">NX</span>
             <span className={`w-2 h-2 rounded-full ml-1 ${isOnline ? "bg-accent-green animate-pulse" : "bg-accent-rose"}`} />
           </div>
 
@@ -82,7 +89,7 @@ export function Layout({ children, onShowTour }: { children: ReactNode; onShowTo
               <NavLink
                 key={item.to}
                 to={item.to}
-                end={item.to === "/"}
+                end={item.to === "/app"}
                 className={({ isActive }) =>
                   `flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                     isActive
@@ -106,7 +113,7 @@ export function Layout({ children, onShowTour }: { children: ReactNode; onShowTo
                 <ChevronDown className={`w-3.5 h-3.5 transition-transform ${moreOpen ? "rotate-180" : ""}`} />
               </button>
               {moreOpen && (
-                <div className="absolute right-0 top-full mt-2 w-64 glass rounded-xl overflow-hidden shadow-xl animate-scale-in z-50">
+                <div className="absolute right-0 top-full mt-2 w-64 rounded-xl overflow-hidden shadow-xl animate-scale-in z-50 bg-bg-secondary border border-border backdrop-blur-none">
                   {MORE_NAV.map((item) => (
                     <NavLink
                       key={item.to}
@@ -148,7 +155,7 @@ export function Layout({ children, onShowTour }: { children: ReactNode; onShowTo
             )}
 
             <button
-              onClick={() => onShowTour ? onShowTour() : (() => { localStorage.removeItem("marketmind-tour-seen"); window.location.reload(); })()}
+              onClick={() => onShowTour ? onShowTour() : (() => { localStorage.removeItem("nexus-tour-seen"); window.location.reload(); })()}
               className="p-2 rounded-lg text-text-secondary hover:text-text-primary hover:bg-white/[0.06] transition-colors"
               title="Restart tour"
             >
@@ -161,6 +168,14 @@ export function Layout({ children, onShowTour }: { children: ReactNode; onShowTo
               title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
             >
               {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </button>
+
+            <button
+              onClick={handleLogout}
+              className="p-2 rounded-lg text-text-secondary hover:text-accent-rose hover:bg-accent-rose/10 transition-all"
+              title="Sign out"
+            >
+              <LogOut className="w-4 h-4" />
             </button>
 
             <button
@@ -179,7 +194,7 @@ export function Layout({ children, onShowTour }: { children: ReactNode; onShowTo
               <NavLink
                 key={item.to}
                 to={item.to}
-                end={item.to === "/"}
+                end={item.to === "/app"}
                 onClick={() => setMobileOpen(false)}
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${

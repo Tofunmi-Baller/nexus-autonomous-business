@@ -96,7 +96,7 @@ export function Treasury() {
           </span>
         </div>
         <p className="text-text-secondary text-sm sm:text-base">
-          How MarketMind looks after its own money so it can keep running
+          How Nexus looks after its own money so it can keep running
         </p>
       </div>
 
@@ -104,7 +104,7 @@ export function Treasury() {
         <div className="glass rounded-2xl px-6 py-14 text-center animate-fade-in-up delay-100">
           <Landmark className="w-12 h-12 text-text-secondary/20 mx-auto mb-4 animate-bounce-subtle" />
           <p className="text-text-secondary font-medium">Treasury data isn't available yet</p>
-          <p className="text-sm text-text-secondary/60 mt-1">Run the demo to give MarketMind some funds to manage</p>
+          <p className="text-sm text-text-secondary/60 mt-1">Run the demo to give Nexus some funds to manage</p>
         </div>
       )}
 
@@ -169,7 +169,7 @@ export function Treasury() {
             <span className="text-xs text-text-secondary uppercase tracking-wider font-medium">Last Rebalance</span>
           </div>
           <div className="text-2xl font-bold">{treasury ? timeAgo(treasury.lastRebalance) : "—"}</div>
-          <p className="text-xs text-text-secondary mt-1">MarketMind adjusts its holdings on its own</p>
+          <p className="text-xs text-text-secondary mt-1">Nexus adjusts its holdings on its own</p>
         </div>
       </div>
 

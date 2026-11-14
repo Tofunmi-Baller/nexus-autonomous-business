@@ -101,7 +101,7 @@ export async function requestDeposit(
   if (isDemoMode()) {
     return {
       correlation_id: `demo-deposit-${uuidv4().slice(0, 8)}`,
-      deposit_address: "marketmind-agent.testnet",
+      deposit_address: "nexus-agent.testnet",
       status: "SUCCESS",
     };
   }

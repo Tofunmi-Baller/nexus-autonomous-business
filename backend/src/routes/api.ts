@@ -587,7 +587,7 @@ router.post("/demo/run", async (_req: Request, res: Response) => {
     }));
 
     // Step 2: Consulting data providers
-    sendStep(makeDemoStep(2, "Consulting data providers", "running", "MarketMind is selecting the best supplier agents for this topic and buying data from them..."));
+    sendStep(makeDemoStep(2, "Consulting data providers", "running", "Nexus is selecting the best supplier agents for this topic and buying data from them..."));
     let procurement = { orders: [] as unknown[], totalCost: "0.00", context: "" };
     try {
       procurement = await procureForReport(reportId, "BTC Weekly Outlook — Demo");
@@ -599,7 +599,7 @@ router.post("/demo/run", async (_req: Request, res: Response) => {
     }));
 
     // Step 3: Generate report
-    sendStep(makeDemoStep(3, "Generating report", "running", "MarketMind is writing your market brief using AI, enriched with supplier data..."));
+    sendStep(makeDemoStep(3, "Generating report", "running", "Nexus is writing your market brief using AI, enriched with supplier data..."));
     const report = await generateReport("BTC Weekly Outlook — Demo", "demo-customer.testnet", { reportId, supplierContext: procurement.context });
     report.price = price;
     sendStep(makeDemoStep(3, "Generating report", "complete", `"${report.title}" is ready`, {

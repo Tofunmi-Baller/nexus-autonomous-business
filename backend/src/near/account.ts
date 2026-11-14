@@ -8,7 +8,7 @@ const DEMO_BALANCES: Record<string, string> = {
 
 export function getAgentAccountId(): string {
   const config = getConfig();
-  return config.near.agent_account || "marketmind-agent.testnet";
+  return config.near.agent_account || "nexus-agent.testnet";
 }
 
 export async function getBalance(): Promise<Record<string, string>> {

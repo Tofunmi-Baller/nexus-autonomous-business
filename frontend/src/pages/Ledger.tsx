@@ -192,10 +192,10 @@ export function Ledger() {
             <Zap className="w-12 h-12 text-text-secondary/15 mx-auto mb-4 animate-bounce-subtle" />
             <p className="text-lg font-medium text-text-secondary mb-2">No transactions yet</p>
             <p className="text-sm text-text-secondary/60 mb-5">
-              Run the demo to see MarketMind in action
+              Run the demo to see Nexus in action
             </p>
             <Link
-              to="/demo"
+              to="/app/demo"
               className="btn-gradient inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm"
             >
               <Play className="w-4 h-4" />

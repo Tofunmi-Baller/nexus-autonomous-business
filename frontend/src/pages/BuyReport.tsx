@@ -46,7 +46,7 @@ import {
 } from "../api";
 import { ConfidenceBar } from "../components/DecisionCard";
 
-const AFFILIATE_STORAGE_KEY = "marketmind-referred-by";
+const AFFILIATE_STORAGE_KEY = "nexus-referred-by";
 const PRICE_RECENT_MS = 60 * 60 * 1000;
 
 interface TopicCard {
@@ -267,7 +267,7 @@ export function BuyReport() {
           <div className="glass rounded-2xl px-5 py-4 flex flex-wrap items-center justify-between gap-3">
             <div>
               <p className="text-xs text-text-secondary uppercase tracking-wider font-medium">Price right now</p>
-              <p className="text-xs text-text-secondary/70 mt-0.5">MarketMind sets this itself based on demand</p>
+              <p className="text-xs text-text-secondary/70 mt-0.5">Nexus sets this itself based on demand</p>
             </div>
             <div className="flex items-center gap-3">
               {priceUpdated && (
@@ -399,7 +399,7 @@ export function BuyReport() {
                 </div>
                 <div className="min-w-0">
                   <p className="text-sm font-semibold">
-                    MarketMind will consult {suppliers.length} data {suppliers.length === 1 ? "provider" : "providers"} for this report
+                    Nexus will consult {suppliers.length} data {suppliers.length === 1 ? "provider" : "providers"} for this report
                   </p>
                   <div className="flex flex-wrap gap-2 mt-2.5">
                     {suppliers.map((s) => (
@@ -490,7 +490,7 @@ export function BuyReport() {
               {purchasing ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  MarketMind is cooking...
+                  Nexus is cooking...
                 </>
               ) : (
                 <>
@@ -615,7 +615,7 @@ export function BuyReport() {
             <div>
               <p className="text-sm font-semibold">
                 {escrow?.status === "released"
-                  ? "Payment released to MarketMind"
+                  ? "Payment released to Nexus"
                   : escrow?.status === "refunded"
                   ? "Payment refunded to you"
                   : "Payment held in escrow for 7 days"}

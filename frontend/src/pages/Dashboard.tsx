@@ -50,7 +50,7 @@ export function Dashboard() {
       <div className="animate-fade-in-up">
         <div className="flex items-center gap-3 mb-1">
           <h1 className="text-3xl sm:text-4xl font-bold">
-            <span className="gradient-text">{status?.name || "MarketMind"}</span>
+            <span className="gradient-text">{status?.name || "Nexus"}</span>
           </h1>
           <span className="flex items-center gap-1.5 glass px-2.5 py-1 rounded-full text-xs font-medium">
             <span className="w-2 h-2 rounded-full bg-accent-green animate-pulse" />
@@ -146,7 +146,7 @@ export function Dashboard() {
       {/* Two clear CTAs — the most important actions */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-fade-in-up delay-500">
         <Link
-          to="/demo"
+          to="/app/demo"
           className="glass rounded-2xl p-6 flex items-center gap-4 hover:scale-[1.01] transition-all group"
         >
           <div className="w-12 h-12 rounded-xl btn-gradient flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
@@ -159,7 +159,7 @@ export function Dashboard() {
           <ArrowRight className="w-5 h-5 text-text-secondary flex-shrink-0 ml-auto group-hover:translate-x-1 transition-transform" />
         </Link>
         <Link
-          to="/buy"
+          to="/app/buy"
           className="glass rounded-2xl p-6 flex items-center gap-4 hover:scale-[1.01] transition-all group"
         >
           <div className="w-12 h-12 rounded-xl bg-accent-green/15 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
@@ -184,7 +184,7 @@ export function Dashboard() {
               Live
             </div>
           </div>
-          <Link to="/ledger" className="text-xs text-accent-violet hover:underline flex items-center gap-1">
+          <Link to="/app/ledger" className="text-xs text-accent-violet hover:underline flex items-center gap-1">
             Full ledger <ArrowRight className="w-3 h-3" />
           </Link>
         </div>
@@ -209,7 +209,7 @@ export function Dashboard() {
         ) : (
           <div className="px-6 py-12 text-center">
             <Zap className="w-8 h-8 text-text-secondary/20 mx-auto mb-2 animate-bounce-subtle" />
-            <p className="text-text-secondary text-sm">No activity yet — run the demo to see MarketMind in action</p>
+            <p className="text-text-secondary text-sm">No activity yet — run the demo to see Nexus in action</p>
           </div>
         )}
       </div>

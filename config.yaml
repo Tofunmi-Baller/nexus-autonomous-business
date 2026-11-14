@@ -5,7 +5,7 @@
 # No code changes required.
 
 agent:
-  name: "MarketMind"
+  name: "Nexus"
   description: "AI-powered crypto market research agent"
 
 # NEAR account the agent operates from (set after first run)

@@ -15,7 +15,7 @@ import {
 } from "../api";
 import { AnimatedCounter } from "../components/AnimatedCounter";
 
-const STORAGE_KEY = "marketmind-affiliate-code";
+const STORAGE_KEY = "nexus-affiliate-code";
 
 /** Commission may arrive as 0.05 or 5; both mean five percent. */
 function commissionPct(n: number | undefined): number {
@@ -24,7 +24,7 @@ function commissionPct(n: number | undefined): number {
 }
 
 function referralLink(code: string): string {
-  return `${window.location.origin}/buy?ref=${encodeURIComponent(code)}`;
+  return `${window.location.origin}/app/buy?ref=${encodeURIComponent(code)}`;
 }
 
 function CopyButton({ text, label }: { text: string; label: string }) {

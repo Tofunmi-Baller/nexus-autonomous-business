@@ -151,7 +151,7 @@ export function Intelligence() {
             {mode === "live" ? "Live" : mode === "polling" ? "Checking every 3s" : "Connecting…"}
           </span>
         </div>
-        <p className="text-text-secondary text-sm sm:text-base">Watch MarketMind make decisions in real-time</p>
+        <p className="text-text-secondary text-sm sm:text-base">Watch Nexus make decisions in real-time</p>
       </div>
 
       {/* Filters */}
@@ -206,10 +206,10 @@ export function Intelligence() {
             <div className="glass rounded-2xl px-6 py-16 text-center animate-fade-in-up delay-200">
               <Brain className="w-12 h-12 text-text-secondary/20 mx-auto mb-4 animate-bounce-subtle" />
               <p className="text-text-secondary font-medium max-w-sm mx-auto">
-                MarketMind hasn't made any decisions yet. Run the demo to see the AI think!
+                Nexus hasn't made any decisions yet. Run the demo to see the AI think!
               </p>
               <Link
-                to="/demo"
+                to="/app/demo"
                 className="btn-gradient inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm mt-5"
               >
                 <Zap className="w-4 h-4" />

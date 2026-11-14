@@ -1,4 +1,4 @@
-# MarketMind — Autonomous AI Research Shop
+# Nexus — Autonomous AI Research Shop
 
 > **NEAR Hackathon 2026 · Track 04: Autonomous Business**
 
@@ -11,8 +11,18 @@ An AI agent that runs as an autonomous micro-business. It sells short crypto mar
 ```bash
 npm install
 npm run dev
-# Open http://localhost:5173/demo and click "Run Full Demo Loop"
+# Open http://localhost:5176, click "Launch Dashboard", sign in with any
+# NEAR account name (demo login), then open Demo → "Run Full Demo Loop"
 ```
+
+| URL | What's there |
+|-----|--------------|
+| `http://localhost:5176/` | Landing page: what Nexus is, how a sale works, where the money goes |
+| `http://localhost:5176/login` | Demo sign-in (any account name and password) |
+| `http://localhost:5176/app` | Dashboard (sign-in required) |
+| `http://localhost:5176/app/demo` | One-click full business cycle |
+| `http://localhost:5176/app/ledger` | Public ledger of every transaction |
+| `http://localhost:3011/api/status` | Backend API |
 
 The demo executes a real end-to-end business cycle:
 1. Customer deposits payment (testnet simulation)
@@ -46,7 +56,7 @@ The demo executes a real end-to-end business cycle:
 ┌──────────────────────▼───────────────────────────┐
 │            React Dashboard (Vite)                 │
 │                                                   │
-│  Dashboard · Public Ledger · Buy Reports · Demo   │
+│  Landing · Login · Dashboard · Ledger · Demo · …   │
 └───────────────────────────────────────────────────┘
 ```
 
@@ -123,6 +133,7 @@ npm run demo
 | `AGENT_ID` | NEAR Intents agent ID (set after creation) |
 | `GRANT_TOKEN` | Agent grant token (set after issuance) |
 | `DEMO_MODE` | Enable testnet simulation (default: true) |
+| `PORT` | Backend port (default: 3011; the Vite dev server on 5176 proxies `/api` to it) |
 
 ## Config Reference
 
@@ -162,6 +173,11 @@ kill_switch: false  # set true to halt everything
 3. **Polished dashboard** — real-time ledger with a trading-terminal aesthetic.
 4. **Security-first** — function-call keys, spending caps at the contract level.
 5. **Useful output** — actual crypto market briefs, not lorem ipsum.
+
+## Current Limitations
+
+- **Testnet payments are simulated.** The NEAR Intents Agent API only runs on mainnet, so with `DEMO_MODE=true` deposits, swaps and payouts are simulated and logged with `demo-tx-*` hashes. AI report generation is real.
+- **Demo sign-in.** The login page accepts any NEAR account name and password and stores the session in the browser. Wallet-based sign-in would replace it in production.
 
 ## License
 

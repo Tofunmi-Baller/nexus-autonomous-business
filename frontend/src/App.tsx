@@ -1,7 +1,9 @@
 import { useState, useEffect, useCallback, Component, type ReactNode } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { Layout } from "./components/Layout";
 import { OnboardingTour } from "./components/OnboardingTour";
+import { Landing } from "./pages/Landing";
+import { Login } from "./pages/Login";
 import { Dashboard } from "./pages/Dashboard";
 import { Ledger } from "./pages/Ledger";
 import { BuyReport } from "./pages/BuyReport";
@@ -14,7 +16,7 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { error: Error | 
   state: { error: Error | null } = { error: null };
   static getDerivedStateFromError(error: Error) { return { error }; }
   componentDidCatch(error: Error, info: { componentStack?: string | null }) {
-    console.error("[MarketMind] React error:", error, info.componentStack);
+    console.error("[Nexus] React error:", error, info.componentStack);
   }
   render() {
     if (this.state.error) {
@@ -36,16 +38,29 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { error: Error | 
   }
 }
 
-export function App() {
+function isLoggedIn(): boolean {
+  return !!localStorage.getItem("nexus-user");
+}
+
+function RequireAuth({ children }: { children: ReactNode }) {
+  const location = useLocation();
+  if (!isLoggedIn()) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+  return <>{children}</>;
+}
+
+function AppShell() {
   const [showTour, setShowTour] = useState(false);
 
   useEffect(() => {
-    const seen = localStorage.getItem("marketmind-tour-seen");
-    if (!seen) setShowTour(true);
+    if (localStorage.getItem("nexus-tour-seen")) return;
+    const timer = setTimeout(() => setShowTour(true), 900);
+    return () => clearTimeout(timer);
   }, []);
 
   const completeTour = useCallback(() => {
-    localStorage.setItem("marketmind-tour-seen", "1");
+    localStorage.setItem("nexus-tour-seen", "1");
     setShowTour(false);
   }, []);
 
@@ -54,7 +69,7 @@ export function App() {
   }, []);
 
   return (
-    <ErrorBoundary>
+    <>
       {showTour && <OnboardingTour onComplete={completeTour} />}
       <Layout onShowTour={openTour}>
         <Routes>
@@ -67,6 +82,31 @@ export function App() {
           <Route path="/demo" element={<Demo />} />
         </Routes>
       </Layout>
+    </>
+  );
+}
+
+export function App() {
+  return (
+    <ErrorBoundary>
+      <Routes>
+        {/* Public routes */}
+        <Route path="/" element={<Landing />} />
+        <Route path="/login" element={<Login />} />
+
+        {/* Protected dashboard routes */}
+        <Route
+          path="/app/*"
+          element={
+            <RequireAuth>
+              <AppShell />
+            </RequireAuth>
+          }
+        />
+
+        {/* Catch-all: redirect to landing */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
     </ErrorBoundary>
   );
 }

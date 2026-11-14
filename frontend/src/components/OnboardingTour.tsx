@@ -19,7 +19,7 @@ interface Props {
 const STEPS = [
   {
     icon: Zap,
-    title: "Meet MarketMind",
+    title: "Meet Nexus",
     description:
       "An AI agent that runs its own research business. It generates crypto market reports, handles payments, and splits revenue — all autonomously.",
     sub: "No blockchain experience needed. Let's show you around.",
@@ -72,7 +72,7 @@ export function OnboardingTour({ onComplete }: Props) {
   const next = useCallback(() => {
     if (step === STEPS.length - 1) {
       onComplete();
-      navigate("/demo");
+      navigate("/app/demo");
       return;
     }
     setDirection("next");
